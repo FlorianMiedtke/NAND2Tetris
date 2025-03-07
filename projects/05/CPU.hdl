@@ -1,0 +1,102 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/5/CPU.hdl
+/**
+ * The Hack Central Processing unit (CPU).
+ * Parses the binary code in the instruction input and executes it according to the
+ * Hack machine language specification. In the case of a C-instruction, computes the
+ * function specified by the instruction. If the instruction specifies to read a memory
+ * value, the inM input is expected to contain this value. If the instruction specifies
+ * to write a value to the memory, sets the outM output to this value, sets the addressM
+ * output to the target address, and asserts the writeM output (when writeM = 0, any
+ * value may appear in outM).
+ * If the reset input is 0, computes the address of the next instruction and sets the
+ * pc output to that value. If the reset input is 1, sets pc to 0.
+ * Note: The outM and writeM outputs are combinational: they are affected by the
+ * instruction's execution during the current cycle. The addressM and pc outputs are
+ * clocked: although they are affected by the instruction's execution, they commit to
+ * their new values only in the next cycle.
+ */
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    //A Register
+    Not(in=instruction[15], out=notInstrMsb);
+    Or(a=notInstrMsb, b=instruction[5], out=aRegOrOut);
+    ARegister(in=aluInstrMuxOut, load=aRegOrOut, out=aRegisterOut, out[0..14]=addressM);
+    //D Register
+    And(a=instruction[15], b=instruction[4], out=dRegisterLoad);
+    DRegister(in=aluOut, load=dRegisterLoad, out=dRegisterOut);
+    //Mux Alu and instruction to A Register
+    Mux16(a=instruction, b=aluOut, sel=instruction[15], out=aluInstrMuxOut);
+    //Mux A Register and inM to Alu
+    Mux16(a=aRegisterOut, b=inM, sel=instruction[12], out=aRegInMMuxOut);
+    
+    ALU(x=dRegisterOut, y=aRegInMMuxOut, 
+        zx=instruction[11], 
+        nx=instruction[10], 
+        zy=instruction[9], 
+        ny=instruction[8], 
+        f=instruction[7], 
+        no=instruction[6], 
+        out=aluOut, out=outM, zr=isZero, ng=isNegative);
+
+    //WriteM
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    //PC
+    //Conditions
+    //Helper
+    Not(in=isNegative, out=isPositive);
+    Not(in=isZero, out=isNotZero);
+    //JGT
+    And(a=instruction[0], b=isPositive, out=jgtTempOut);
+    And(a=jgtTempOut, b=isNotZero, out=isJgt);
+    //JEQ
+    And(a=instruction[1], b=isZero, out=isJeq);
+    //JGE
+    And(a=instruction[0], b=instruction[1], out=jgeTempOut);
+    Or(a=isJgt, b=isJeq, out=jgeTemp2Out);
+    And(a=jgeTempOut, b=jgeTemp2Out, out=isJge);
+    //JLT
+    And(a=instruction[2], b=isNegative, out=isJlt);
+    //JNE
+    And(a=instruction[0], b=instruction[2], out=jneTempOut);
+    And(a=jneTempOut, b=isNotZero, out=isJne);
+    //JLE
+    And(a=instruction[1], b=instruction[2], out=jleTempOut);
+    Or(a=isJlt, b=isJeq, out=jleTemp2Out);
+    And(a=jleTempOut, b=jleTemp2Out, out=isJle);
+    //JMP
+    And(a=instruction[0], b=instruction[1], out=jmpTempOut);
+    And(a=jmpTempOut, b=instruction[2], out=isJmp);
+
+    //Load Condition
+    Or8Way(in[0]=isJgt, 
+    in[1]=isJeq,
+    in[2]=isJge,
+    in[3]=isJlt,
+    in[4]=isJne,
+    in[5]=isJle,
+    in[6]=isJmp,
+    in[7]=false,
+    out=isLoadTemp);
+    And(a=isLoadTemp, b=instruction[15], out=isLoad);
+
+    //Increment condition
+    Not(in=isLoad, out=isIncrement);
+
+    PC(in=aRegisterOut, load=isLoad, inc=isIncrement, reset=reset, out[0..14]=pc);
+}
