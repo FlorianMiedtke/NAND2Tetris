@@ -47,6 +47,7 @@ public class TranslationTables {
         destBitsTable.put("M", "001");
         destBitsTable.put("D", "010");
         destBitsTable.put("DM", "011");
+        destBitsTable.put("MD", "011");
         destBitsTable.put("A", "100");
         destBitsTable.put("AM", "101");
         destBitsTable.put("AD", "110");

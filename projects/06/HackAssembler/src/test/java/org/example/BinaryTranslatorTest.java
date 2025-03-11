@@ -2,25 +2,25 @@ package org.example;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BinaryTranslatorTest {
     BinaryTranslator instanceUnderTest = new BinaryTranslator();
 
     @Test
     public void testTranslateAInstructionValue() {
-        String testString1 = "1";
+        Integer testInteger1 = 1;
         String expectedString1 = "0000000000000001";
 
-        String testString2 = "0";
+        Integer testInteger2 = 0;
         String expectedString2 = "0000000000000000";
 
-        String testString3 = "32767";
+        Integer testInteger3 = 32767;
         String expectedString3 = "0111111111111111";
 
-        String result1 = instanceUnderTest.translateAInstructionValue(testString1);
-        String result2 = instanceUnderTest.translateAInstructionValue(testString2);
-        String result3 = instanceUnderTest.translateAInstructionValue(testString3);
+        String result1 = instanceUnderTest.translateAInstructionValue(testInteger1);
+        String result2 = instanceUnderTest.translateAInstructionValue(testInteger2);
+        String result3 = instanceUnderTest.translateAInstructionValue(testInteger3);
 
         assertEquals(expectedString1, result1);
         assertEquals(expectedString2, result2);

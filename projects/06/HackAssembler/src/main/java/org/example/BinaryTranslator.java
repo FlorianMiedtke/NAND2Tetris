@@ -1,8 +1,5 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Translates instructions to a HACK compatible binary format.
  */
@@ -10,9 +7,8 @@ public class BinaryTranslator {
 
     private final TranslationTables translationTables = new TranslationTables();
 
-    public String translateAInstructionValue(String aInstructionValue) {
-        int integerValue = Integer.parseInt(aInstructionValue);
-        String binaryValueString = Integer.toBinaryString(integerValue);
+    public String translateAInstructionValue(Integer aInstructionValue) {
+        String binaryValueString = Integer.toBinaryString(aInstructionValue);
 
         StringBuilder stringBuilder = new StringBuilder(binaryValueString);
         while (stringBuilder.length() < 16) {

@@ -2,19 +2,24 @@ package org.example;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParserTest {
     Parser instanceUnderTest = new Parser();
 
     @Test
     public void testGetAInstructionValue() {
-        String testString = "@1";
-        String expectedString = "1";
+        String testString1 = "@1";
+        String expectedString1 = "1";
 
-        String result = instanceUnderTest.getAInstructionValue(testString);
+        String testString2 = "  @1";
+        String expectedString2 = "1";
 
-        assertEquals(expectedString, result);
+        String result1 = instanceUnderTest.getAInstructionValue(testString1);
+        String result2 = instanceUnderTest.getAInstructionValue(testString2);
+
+        assertEquals(expectedString1, result1);
+        assertEquals(expectedString2, result2);
     }
 
     @Test
@@ -125,5 +130,25 @@ class ParserTest {
         assertEquals(expectedString3, result3);
         assertEquals(expectedString4, result4);
         assertEquals(expectedString5, result5);
+    }
+
+    @Test
+    public void testGetLabelDeclarationName() {
+        String testString1 = "(test)";
+        String expectedString1 = "test";
+
+        String testString2 = "   (test)";
+        String expectedString2 = "test";
+
+        String testString3 = "(test)   ";
+        String expectedString3 = "test";
+
+        String result1 = instanceUnderTest.getLabelDeclarationName(testString1);
+        String result2 = instanceUnderTest.getLabelDeclarationName(testString2);
+        String result3 = instanceUnderTest.getLabelDeclarationName(testString3);
+
+        assertEquals(expectedString1, result1);
+        assertEquals(expectedString2, result2);
+        assertEquals(expectedString3, result3);
     }
 }
