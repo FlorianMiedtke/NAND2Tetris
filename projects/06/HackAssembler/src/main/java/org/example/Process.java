@@ -10,9 +10,9 @@ import java.io.PrintWriter;
  */
 public class Process {
 
-    private BinaryTranslator binaryTranslator = new BinaryTranslator();
-    private Parser parser = new Parser();
-    private SymbolTable symbolTable = new SymbolTable();
+    private final BinaryTranslator binaryTranslator = new BinaryTranslator();
+    private final Parser parser = new Parser();
+    private final SymbolTable symbolTable = new SymbolTable();
 
     public void run(String[] args) {
         firstPassThrough(args);
@@ -55,7 +55,7 @@ public class Process {
      */
     private void secondPassThrough(String[] args) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]));
-             PrintWriter printWriter = new PrintWriter("out.hack")) {
+             PrintWriter printWriter = new PrintWriter(getFileOutputName(args[0]))) {
             //Workaround to avoid blank line
             boolean firstIteration = true;
             String translatedLine;
@@ -99,6 +99,10 @@ public class Process {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String getFileOutputName(String fileNameWithEnding) {
+        return fileNameWithEnding.split("\\.")[0] + ".hack";
     }
 
     private boolean emptyLineWorkaround(boolean firstIteration, PrintWriter printWriter) {
