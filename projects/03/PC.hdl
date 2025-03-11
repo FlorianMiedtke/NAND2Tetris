@@ -14,7 +14,6 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //Decision making
     //3 Way Or for Register load parameter
     Or(a=load, b=inc, out=loadOr0);
     Or(a=loadOr0, b=reset, out=loadOr1);
