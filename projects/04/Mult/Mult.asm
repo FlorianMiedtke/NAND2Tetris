@@ -11,6 +11,7 @@
 //Pseudo code:
 
 //Loop
+//R2 = 0
 //i = 0
 //(LOOP)
 //	if(i > R0) GOTO END
@@ -24,6 +25,8 @@
 //(END)
 //	JUMP END
 
+@R2
+M=0
 @i
 M=0
 
