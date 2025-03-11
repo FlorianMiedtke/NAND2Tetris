@@ -74,7 +74,7 @@ CHIP ALU {
     out[15]=ng);
 
     //zr
-    //I wanted to make a Nor16Way, but did not know how to make helper chips. So I found this workaround.
+    //I wanted to make a Nor16Way, but did not find out how to make helper chips. So I used this workaround.
     Or8Way(in=outLsbHalf , out=outOr8WayLsb);
     Or8Way(in[0..6]=outMsbHalf, in[7]=outMsb , out=outOr8WayMsb);
     Or(a=outOr8WayLsb, b=outOr8WayMsb, out=combinedOr);
