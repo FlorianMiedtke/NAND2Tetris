@@ -10,9 +10,9 @@ import java.io.PrintWriter;
  */
 public class Process {
 
-    BinaryTranslator binaryTranslator = new BinaryTranslator();
-    Parser parser = new Parser();
-    SymbolTable symbolTable = new SymbolTable();
+    private BinaryTranslator binaryTranslator = new BinaryTranslator();
+    private Parser parser = new Parser();
+    private SymbolTable symbolTable = new SymbolTable();
 
     public void run(String[] args) {
         firstPassThrough(args);
